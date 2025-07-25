@@ -25,15 +25,16 @@ jobs:
         with:
           ndk-version: "r26d"
 
+      - name: Export ANDROID_NDK_ROOT to GITHUB_ENV
+        run: echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
+
       - name: Debug NDK path
         run: |
           echo "ANDROID_NDK_ROOT: $ANDROID_NDK_ROOT"
           ls -l $ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/
-
+      
       - name: Build with cargo for aarch64-linux-android
         working-directory: booster
-        env:
-          ANDROID_NDK_ROOT: ${{ env.ANDROID_NDK_ROOT }}
         run: |
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK_ROOT/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang
           echo "Linker: $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
