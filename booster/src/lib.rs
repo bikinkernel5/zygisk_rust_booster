@@ -7,7 +7,11 @@ fn android_log(msg: &str) {
     use std::ffi::CString;
     unsafe {
         let c_msg = CString::new(msg).unwrap();
-        __android_log_write(4, b"ZygiskRust\0".as_ptr() as *const i8, c_msg.as_ptr());
+        __android_log_write(
+            4,
+            b"ZygiskRust\0".as_ptr() as *const i8,
+            c_msg.as_ptr() as *const i8,
+        );
     }
 }
 
