@@ -1,9 +1,10 @@
-name: Build Zygisk Rust Booster
+name: Build Rust for Android
 
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -12,28 +13,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Rust nightly & target Android
-        run: |
-          rustup update
-          rustup default nightly
-          rustup target add aarch64-linux-android
+      - name: Set up Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: aarch64-linux-android
+          override: true
 
-      - name: Install Android NDK
+      - name: Set up Android NDK
         uses: nttld/setup-ndk@v1
         with:
-          ndk-version: r26d
-          local-cache: true
+          ndk-version: "r26d" # Ganti sesuai kebutuhan project
 
-      - name: Build libbooster.so for aarch64-linux-android
-        working-directory: booster
+      - name: Debug NDK path
+        run: |
+          echo "ANDROID_NDK_HOME: $ANDROID_NDK_HOME"
+          ls -l $ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/
+      
+      - name: Build with cargo for aarch64-linux-android
         env:
-          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_ROOT }}
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_HOME }}
         run: |
           export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang
+          echo "Linker: $CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER"
           cargo build --release --target aarch64-linux-android
-
-      - name: Upload libbooster.so as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: libbooster.so
-          path: booster/target/aarch64-linux-android/release/libbooster.so
