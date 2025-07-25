@@ -10,6 +10,8 @@ crate-type = ["cdylib"]
 target = "aarch64-linux-android"
 
 [dependencies]
+log = "0.4"
+android_logger = "0.13"
 
 [package.metadata.cargo-ndk]
 linker-args = ["-llog"]
