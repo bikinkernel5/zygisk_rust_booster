@@ -5,12 +5,13 @@ pub extern "C" fn zygisk_main() {
 
 fn android_log(msg: &str) {
     use std::ffi::CString;
+    let tag = CString::new("ZygiskRust").unwrap();
+    let c_msg = CString::new(msg).unwrap();
     unsafe {
-        let c_msg = CString::new(msg).unwrap();
         __android_log_write(
             4,
-            b"ZygiskRust\0".as_ptr() as *const i8,
-            c_msg.as_ptr() as *const i8,
+            tag.as_ptr(),
+            c_msg.as_ptr(),
         );
     }
 }
