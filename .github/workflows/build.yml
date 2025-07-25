@@ -1,0 +1,39 @@
+name: Build Zygisk Rust Booster
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Rust nightly & target Android
+        run: |
+          rustup update
+          rustup default nightly
+          rustup target add aarch64-linux-android
+
+      - name: Install Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+          local-cache: true
+
+      - name: Build libbooster.so for aarch64-linux-android
+        working-directory: booster
+        env:
+          ANDROID_NDK_HOME: ${{ env.ANDROID_NDK_ROOT }}
+        run: |
+          export CARGO_TARGET_AARCH64_LINUX_ANDROID_LINKER=$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang
+          cargo build --release --target aarch64-linux-android
+
+      - name: Upload libbooster.so as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libbooster.so
+          path: booster/target/aarch64-linux-android/release/libbooster.so
