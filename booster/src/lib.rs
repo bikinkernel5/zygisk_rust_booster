@@ -10,8 +10,8 @@ fn android_log(msg: &str) {
     unsafe {
         __android_log_write(
             4,
-            tag.as_ptr(),
-            c_msg.as_ptr(),
+            tag.as_ptr() as *const i8,
+            c_msg.as_ptr() as *const i8,
         );
     }
 }
