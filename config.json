@@ -1,0 +1,4 @@
+{
+  "zygisk": true,
+  "on_boot_mode": "system_server"
+}

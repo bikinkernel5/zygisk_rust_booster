@@ -1,0 +1,6 @@
+id=zygisk_rust_booster
+name=Zygisk Rust Booster
+version=0.1
+versionCode=1
+author=bikinkernel5+copilot
+description=Inject Rust library to Zygisk and Android processes for RAM/performance optimization.
