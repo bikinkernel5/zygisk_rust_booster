@@ -6,4 +6,10 @@ edition = "2021"
 [lib]
 crate-type = ["cdylib"]
 
+[build]
+target = "aarch64-linux-android"
+
 [dependencies]
+
+[package.metadata.cargo-ndk]
+linker-args = ["-llog"]
