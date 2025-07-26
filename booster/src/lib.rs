@@ -1,6 +1,6 @@
 #[no_mangle]
 pub extern "C" fn zygisk_main() {
-    android_log("Zygisk Rust Booster aktif!");
+    android_log("Zygisk Rust Booster aktif (prio 6 error)!");
 }
 
 fn android_log(msg: &str) {
@@ -9,14 +9,9 @@ fn android_log(msg: &str) {
     let c_msg = CString::new(msg).unwrap();
     unsafe {
         __android_log_write(
-            4,
+            6, // <- ubah dari 4 (INFO) ke 6 (ERROR)
             tag.as_ptr() as *const i8,
             c_msg.as_ptr() as *const i8,
         );
     }
-}
-
-#[link(name = "log")]
-extern "C" {
-    fn __android_log_write(prio: i32, tag: *const i8, text: *const i8) -> i32;
 }
